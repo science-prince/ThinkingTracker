@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ThinkingTracker · 思考强度探测</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+  <header class="topbar"><div class="brand"><span class="brand-icon" aria-hidden="true">T</span><span>ThinkingTracker</span><span class="edition">本机观测</span></div><span class="privacy">只保存协议元数据</span></header>
+  <main>
+    <div class="title-row"><div><p class="eyebrow">THINKINGTRACKER / CCSWITCH</p><h1>请求了多少，回显了多少。</h1><p class="subtitle">统一观察经过 CCSwitch 的 Codex 请求，不限制服务商。</p></div><button id="demo" class="button secondary">加入模拟示例</button></div>
+    <section class="connection" aria-label="接入状态"><div><p class="label">当前连接</p><h2 id="connection-title">正在读取本机状态…</h2><p id="connection-note">请稍候。</p></div><div class="connection-actions"><button id="attach" class="button primary" disabled>启用观测</button><button id="restore" class="button secondary" disabled>恢复地址</button><button id="stop" class="button secondary" disabled>恢复并停止</button></div></section>
+    <div class="chain" aria-label="观测链路"><span>Codex</span><span aria-hidden="true">→</span><span class="point">本机探测器 <small id="proxy-address">127.0.0.1:18741</small></span><span aria-hidden="true">→</span><span>CCSwitch <small id="upstream-address">待发现</small></span><span aria-hidden="true">→</span><span>任意兼容来源</span></div>
+    <p class="boundary">“一致”只表示协议字段相同。无最终回显时无法核验；耗时与 token 数不能证明实际思考强度。</p>
+    <div id="error" class="notice error" role="alert" hidden></div><div id="message" class="notice" role="status" hidden></div>
+    <section class="metrics" aria-label="可见记录统计"><div><span>可见请求</span><strong id="total">0</strong></div><div><span>最终回显一致</span><strong id="matched">0</strong></div><div><span>最终回显不同</span><strong id="mismatched">0</strong></div><div><span>待核验 / 无法核验</span><strong id="unknown">0</strong></div></section>
+    <section class="records" aria-labelledby="records-title"><div class="records-heading"><div><h2 id="records-title">请求记录</h2><p>请求值、首包值和最终值分别保留。来源标签仅来自请求模型名称。</p></div><div class="record-actions"><button id="export" class="button secondary">导出元数据</button><button id="clear" class="button text">清空记录</button></div></div>
+      <div class="filters"><label class="search"><span>搜索</span><input id="search" type="search" placeholder="模型或来源标签" autocomplete="off"></label><label><span class="sr-only">核验结果</span><select id="filter"><option value="all">全部结果</option><option value="match">回显一致</option><option value="mismatch">回显不同</option><option value="unknown">无法核验 / 进行中</option></select></label><label class="checkbox"><input id="show-demo" type="checkbox">显示模拟记录</label><span class="update" id="update">等待更新</span></div>
+      <div class="table-scroll" tabindex="0" aria-label="请求记录表，可横向滚动"><table><thead><tr><th>时间 / 来源标签</th><th>请求模型</th><th>请求强度</th><th>首包回显</th><th>最终回显</th><th>返回模型</th><th>思考 tokens</th><th>结果</th><th><span class="sr-only">查看详情</span></th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="empty" id="empty"><span class="empty-symbol" aria-hidden="true">⌁</span><h3>等待下一次请求</h3><p>启用后重新打开 Codex，并正常发送消息。记录会自动出现在这里。</p><p>也可以点击“加入模拟示例”，无 API Key、无额度消耗。</p></div>
+    </section>
+    <details class="help"><summary>怎样理解探测结果？</summary><div class="help-content"><p><strong>请求强度</strong>读取请求报文中的 reasoning.effort 或 reasoning_effort；配置文件里的默认值仅作参考。</p><p><strong>最终回显</strong>取 response.completed 等结束事件或完整 JSON 的字段。首包有值而最终没有值，仍显示“未回显”。显式 null 与字段缺失分开显示。</p><p><strong>返回模型</strong>是响应声明的名称，可能存在别名；无法单靠它证明远端真实模型。</p><p><strong>覆盖范围</strong>支持 HTTP JSON、SSE，以及未压缩的 Responses WebSocket 文本消息。压缩 WebSocket 透明转发，但标为无法解析；CCSwitch 内部出站改写不可见。</p><p><strong>停止与恢复</strong>“恢复地址”保留服务继续转发；“恢复并停止”等待当前请求完成。已有 Codex 进程可能缓存地址，请在恢复后重新启动 Codex。关闭本网页不会停止后台服务。</p></div></details>
+    <footer><span>本机监听 · 不安装证书或抓包驱动 · 不保存密钥、提示词、回答或思考正文</span><span id="retention">最多保留 500 条</span></footer>
+  </main>
+  <dialog id="detail"><div class="dialog-heading"><h2>协议证据详情</h2><button id="close-detail" class="button secondary">关闭</button></div><p id="detail-summary"></p><pre id="detail-json"></pre><p class="dialog-note">仅展示元数据，没有完整请求 / 响应正文。</p></dialog>
+</body></html>

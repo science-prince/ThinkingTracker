@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "ThinkingTracker 架构与观测边界",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1390, 790]
+  },
+  "components": [
+    { "id": "codex-client", "type": "frontend", "label": "Codex", "sublabel": "模型与思考强度", "pos": [60, 145], "size": [220, 94] },
+    { "id": "local-proxy", "type": "backend", "label": "ThinkingTracker 转发", "sublabel": "127.0.0.1:18741", "pos": [420, 145], "size": [220, 94] },
+    { "id": "ccswitch-router", "type": "backend", "label": "CCSwitch", "sublabel": "路由 / 聚合 / 接口转换", "pos": [780, 145], "size": [220, 94] },
+    { "id": "upstream-service", "type": "external", "label": "所选模型供应商", "sublabel": "真实模型与算力不可核验", "pos": [1140, 145], "size": [220, 94] },
+    { "id": "config-bridge", "type": "backend", "label": "配置桥接", "sublabel": "Anaconda selfcontrol", "pos": [60, 430], "size": [220, 94] },
+    { "id": "metadata-parser", "type": "backend", "label": "证据提取", "sublabel": "请求字段 / 最终响应字段", "pos": [420, 430], "size": [220, 94] },
+    { "id": "metadata-history", "type": "database", "label": "元数据历史", "sublabel": "最多 500 条 · 不存正文", "pos": [780, 430], "size": [220, 94] },
+    { "id": "config-files", "type": "database", "label": "客户端配置 / 代理信息", "sublabel": "TOML 地址 · SQLite 只读", "pos": [60, 650], "size": [220, 94] },
+    { "id": "dashboard-ui", "type": "frontend", "label": "中文观测面板", "sublabel": "127.0.0.1:18742 · 令牌保护", "pos": [780, 650], "size": [220, 94] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "本机 · 观测点位于 CCSwitch 前", "wraps": ["codex-client", "local-proxy", "ccswitch-router", "config-bridge", "metadata-parser", "metadata-history", "config-files", "dashboard-ui"], "pad": 34 }
+  ],
+  "connections": [
+    { "id": "client-requests", "from": "codex-client", "to": "local-proxy", "label": "HTTP / WS", "variant": "emphasis" },
+    { "id": "proxy-forwarding", "from": "local-proxy", "to": "ccswitch-router", "label": "原样交付正文", "variant": "emphasis" },
+    { "id": "provider-routing", "from": "ccswitch-router", "to": "upstream-service", "label": "出站不可见", "variant": "dashed" },
+    { "id": "observer-tap", "from": "local-proxy", "to": "metadata-parser", "label": "旁路观察", "variant": "dashed", "labelDy": 100 },
+    { "id": "persist-metadata", "from": "metadata-parser", "to": "metadata-history", "label": "白名单字段" },
+    { "id": "dashboard-records", "from": "metadata-history", "to": "dashboard-ui", "label": "读取记录", "labelDy": 76 },
+    { "id": "config-actions", "from": "config-bridge", "to": "config-files", "label": "发现 / 接入 / 恢复", "variant": "security", "labelDy": 76 }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "可核验的范围", "items": ["客户端实际提交的强度", "最终响应保留的强度回显"] },
+    { "dot": "amber", "title": "结论边界", "items": ["缺少回显时明确标为无法核验", "不能证明内部改写、真实模型或算力"] }
+  ]
+}

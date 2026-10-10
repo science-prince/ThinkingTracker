@@ -1,0 +1,13 @@
+{
+  "name": "thinkingtracker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CCSwitch Codex 请求强度与响应回显的本机观测器",
+  "license": "MIT",
+  "author": { "name": "science-prince", "url": "https://github.com/science-prince" },
+  "repository": { "type": "git", "url": "https://github.com/science-prince/ThinkingTracker.git" },
+  "homepage": "https://github.com/science-prince/ThinkingTracker#readme",
+  "engines": { "node": ">=22" },
+  "scripts": { "start": "node src/main.mjs", "test": "node --test tests/*.test.mjs" }
+}

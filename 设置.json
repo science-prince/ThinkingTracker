@@ -1,0 +1,8 @@
+{
+  "python_path": "D:/Anaconda3/envs/selfcontrol/python.exe",
+  "dashboard_port": 18742,
+  "proxy_port": 18741,
+  "max_records": 500,
+  "max_inspect_bytes": 4194304,
+  "idle_timeout_ms": 300000
+}
